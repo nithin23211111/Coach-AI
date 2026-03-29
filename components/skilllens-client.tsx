@@ -146,26 +146,35 @@ export function SkillLensClient() {
 
     setIsLoading(true)
     try {
-      const { data, error: invokeError } = await supabase.functions.invoke<SkillLensInvokeResponse>('skilllens-analysis', {
-        body: {
+      const res = await fetch("/api/skilllens", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
           currentRole: currentRole.trim(),
           targetRole: targetRole.trim(),
-          currentSkills: combinedSkills,
-          experienceLevel,
-        },
-        headers: {
-          apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        },
-      })
+          skills: combinedSkills,
+          experience: experienceLevel,
+        }),
+      });
+      
+      const text = await res.text();
+console.log("RAW RESPONSE:", text);
 
-      if (invokeError) {
-        setError(invokeError.message || 'Unable to analyze skills.')
-        return
-      }
+let data;
+try {
+  data = JSON.parse(text);
+} catch (e) {
+  setError("API is returning HTML instead of JSON");
+  return;
+}
+      console.log("Response:", data);
+  
 
-      if (data?.error) {
-        setError(data.error)
-        return
+      if (!res.ok) {
+        setError(data?.error || "Failed to analyze skills");
+        return;
       }
 
       const parsed = parseSkillLensResponse(data)

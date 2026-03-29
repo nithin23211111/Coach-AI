@@ -34,6 +34,7 @@ type InterviewCoachFunctionResponse = {
   success?: boolean
   message?: string
   error?: string
+  questions?: string[]
 }
 
 const CAREER_PATH_OPTIONS = [
@@ -147,7 +148,6 @@ export function InterviewCoachClient() {
         {
           body: {
             role: selectedRole,
-            type: selectedType,
           },
         },
       )
@@ -163,6 +163,7 @@ export function InterviewCoachClient() {
             ? data.message
             : 'Interview started successfully.',
         )
+        setGeneratedQuestions(Array.isArray(data.questions) ? data.questions : [])
         return
       }
 
