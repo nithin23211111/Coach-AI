@@ -1,6 +1,5 @@
 import { streamText } from 'ai'
 import { anthropic } from '@ai-sdk/anthropic'
-import { grok } from '@ai-sdk/xai'
 import { groq } from '@ai-sdk/groq'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getCurrentUser } from '@/lib/auth'
@@ -57,9 +56,7 @@ Guidelines:
 
     // Select AI model
     let selectedModel
-    if (model === 'grok') {
-      selectedModel = grok('grok-3')
-    } else if (model === 'groq') {
+    if (model === 'groq') {
       selectedModel = groq('mixtral-8x7b-32768')
     } else {
       selectedModel = anthropic('claude-3-5-sonnet-20241022')
